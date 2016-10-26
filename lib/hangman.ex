@@ -11,13 +11,13 @@ defmodule Hangman do
 
     # Uncomment and complete this:
 
-    # import Supervisor.Spec, warn: false
-    # 
-    # children = [
-    # ]
-    # 
-    # opts = [strategy: :you_choose_a_strategy, name: Hangman.Supervisor]
-    # Supervisor.start_link(children, opts)
+     import Supervisor.Spec, warn: false
+
+     children = [
+       worker(Hangman.Gameserver, [])
+     ]
+
+     opts = [strategy: :one_for_one, name: Hangman.Supervisor]
+     {:ok, _pid} = Supervisor.start_link(children, opts)
   end
 end
-

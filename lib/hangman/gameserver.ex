@@ -1,15 +1,21 @@
 defmodule Hangman.Gameserver do
   use GenServer
   alias Hangman.Game, as: Game
+  #alias Hangman.Crasher, as: Crasher
+
 
   @me __MODULE__
+  #import Hangman.Crasher
 
   #############
   ##   API   ##
   #############
-  def start(default \\ []) do #pass in new_game as default
-    GenServer.start(__MODULE__, default, name: @me)
+  def start_link(default \\ []) do #pass in new_game as default
+    GenServer.start_link(__MODULE__, default, name: @me)
     #word_as_string #should I print the blanks when .start is called?
+  end
+  def new_game do
+    GenServer.call(@me, {:new_game})
   end
   def word_as_string do
     GenServer.call(@me, {:word_as_string})
@@ -35,15 +41,21 @@ defmodule Hangman.Gameserver do
   def show_state do
     GenServer.call(@me, {:show_state})
   end
+  def crash(reason) do
+    GenServer.cast(@me, {:crash, reason})
+  end
 
   ########################
   ##   Implementation   ##
   ########################
   def init(args) do
-    { :ok, Game.new_game }
+    { :ok, Game.new_game } #maybe we don't need it to start with a new_game
   end
 
   #calls
+  def handle_call({:new_game}, _from, state) do
+    { :reply, Game.new_game, state}
+  end
   def handle_call({:show_state}, _from, state) do
     { :reply, state, state}
   end
@@ -76,6 +88,9 @@ defmodule Hangman.Gameserver do
 
 
   #casts
+  def handle_cast({:crash, reason}, state) do
+    {:stop, reason, state}
+  end
   # def handle_cast({:make_move, guess}, state) do
   #   { :noreply, Game.make_move(state, guess)}
   # end
