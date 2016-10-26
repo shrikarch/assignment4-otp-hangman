@@ -16,7 +16,6 @@ defmodule Hangman.Gameserver do
   end
   def make_move(guess) do
     GenServer.call(@me, {:make_move, guess})
-    #word_as_string
   end
 
   def word_length do
@@ -52,7 +51,9 @@ defmodule Hangman.Gameserver do
     { :reply, Game.word_as_string(state), state}
   end
   def handle_call({:make_move, guess}, _from, state) do
-    { :reply, Game.make_move(state, guess), state}
+    { :reply,
+    get_move_status(state, guess),
+    get_move_state(state, guess)}
   end
   def handle_call({:word_length}, _from, state) do
     {:reply, Game.word_length(state), state}
@@ -63,6 +64,16 @@ defmodule Hangman.Gameserver do
   def handle_call({:turns_left}, _from, state) do
     {:reply, Game.turns_left(state), state}
   end
+
+  def get_move_state(state, guess) do
+    {state, status, guess} = Game.make_move(state, guess)
+    state
+  end
+  def get_move_status(state, guess) do
+    {state, status, guess} = Game.make_move(state, guess)
+    status
+  end
+
 
   #casts
   # def handle_cast({:make_move, guess}, state) do
