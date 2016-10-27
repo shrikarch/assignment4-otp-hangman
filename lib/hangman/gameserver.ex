@@ -1,4 +1,4 @@
-defmodule Hangman.Gameserver do
+defmodule Hangman.GameServer do
   use GenServer
   alias Hangman.Game, as: Game
   #alias Hangman.Crasher, as: Crasher
@@ -10,15 +10,19 @@ defmodule Hangman.Gameserver do
   #############
   ##   API   ##
   #############
-  def start_link(default \\ []) do #pass in new_game as default
-    GenServer.start_link(__MODULE__, default, name: @me)
-    #word_as_string #should I print the blanks when .start is called?
+  # def start_link(default \\ []) do #pass in new_game as default
+  #   raise inspect default
+  #   GenServer.start_link(__MODULE__, [default], name: @me)
+  #   #word_as_string #should I print the blanks when .start is called?
+  # end
+  def start_link(word \\ Hangman.Dictionary.random_word) do
+    GenServer.start_link(__MODULE__, word, name: @me)
   end
   def new_game do
-    GenServer.call(@me, {:new_game})
+    GenServer.cast(@me, {:new_game})
   end
-  def word_as_string do
-    GenServer.call(@me, {:word_as_string})
+  def word_as_string(reveal \\ false) do
+    GenServer.call(@me, {:word_as_string, reveal})
   end
   def make_move(guess) do
     GenServer.call(@me, {:make_move, guess})
@@ -48,24 +52,20 @@ defmodule Hangman.Gameserver do
   ########################
   ##   Implementation   ##
   ########################
-  def init(args) do
-    { :ok, Game.new_game } #maybe we don't need it to start with a new_game
+  def init(word) do
+    { :ok, Game.new_game(word) } #maybe we don't need it to start with a new_game
   end
 
   #calls
-  def handle_call({:new_game}, _from, state) do
-    { :reply, Game.new_game, state}
-  end
   def handle_call({:show_state}, _from, state) do
     { :reply, state, state}
   end
-  def handle_call({:word_as_string}, _from, state) do
-    { :reply, Game.word_as_string(state), state}
+  def handle_call({:word_as_string, reveal}, _from, state) do
+    { :reply, Game.word_as_string(state, reveal), state}
   end
   def handle_call({:make_move, guess}, _from, state) do
-    { :reply,
-    get_move_status(state, guess),
-    get_move_state(state, guess)}
+    {state,  status, guess} = Game.make_move(state, guess)
+   { :reply, status, state }
   end
   def handle_call({:word_length}, _from, state) do
     {:reply, Game.word_length(state), state}
@@ -77,22 +77,14 @@ defmodule Hangman.Gameserver do
     {:reply, Game.turns_left(state), state}
   end
 
-  def get_move_state(state, guess) do
-    {state, status, guess} = Game.make_move(state, guess)
-    state
-  end
-  def get_move_status(state, guess) do
-    {state, status, guess} = Game.make_move(state, guess)
-    status
-  end
-
 
   #casts
+  def handle_cast({:new_game}, state) do
+    { :noreply, Game.new_game}
+  end
   def handle_cast({:crash, reason}, state) do
     {:stop, reason, state}
   end
-  # def handle_cast({:make_move, guess}, state) do
-  #   { :noreply, Game.make_move(state, guess)}
-  # end
+
 
 end

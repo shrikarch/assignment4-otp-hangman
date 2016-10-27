@@ -14,7 +14,7 @@ defmodule Hangman do
      import Supervisor.Spec, warn: false
 
      children = [
-       worker(Hangman.Gameserver, [])
+       worker(Hangman.GameServer, [])
      ]
 
      opts = [strategy: :one_for_one, name: Hangman.Supervisor]
