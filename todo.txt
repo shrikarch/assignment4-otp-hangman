@@ -1,4 +1,6 @@
 - add Dictionary supervisor - Done
+- add crash to Dictionary GenServer
 - add explanation for the restart schemes
 - add Dictionary supervisor to top-level supervisor
 - add stop functionality to both the GenServers
+- add test for top level GenServer
