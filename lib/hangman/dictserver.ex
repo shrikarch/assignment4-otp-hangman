@@ -1,3 +1,6 @@
+#in place just in case. Inline implementation in dictionary.ex
+#supervisor will not supervise this. It will supervise dictionary.ex
+
 defmodule Hangman.Dictserver do
   use GenServer
   alias Hangman.Dictionary, as: Dictionary
@@ -5,8 +8,8 @@ defmodule Hangman.Dictserver do
     @me __MODULE__
 
   #API#
-  def start(default \\ []) do
-    GenServer.start(__MODULE__, default, name: @me)
+  def start_link(default \\ []) do
+    GenServer.start_link(__MODULE__, default, name: @me)
   end
   def random_word do
     GenServer.call(@me, {:random})

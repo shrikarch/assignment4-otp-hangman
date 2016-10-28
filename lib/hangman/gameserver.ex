@@ -10,11 +10,6 @@ defmodule Hangman.GameServer do
   #############
   ##   API   ##
   #############
-  # def start_link(default \\ []) do #pass in new_game as default
-  #   raise inspect default
-  #   GenServer.start_link(__MODULE__, [default], name: @me)
-  #   #word_as_string #should I print the blanks when .start is called?
-  # end
   def start_link(word \\ Hangman.Dictionary.random_word) do
     GenServer.start_link(__MODULE__, word, name: @me)
   end
@@ -53,7 +48,7 @@ defmodule Hangman.GameServer do
   ##   Implementation   ##
   ########################
   def init(word) do
-    { :ok, Game.new_game(word) } #maybe we don't need it to start with a new_game
+    { :ok, Game.new_game(word) }
   end
 
   #calls

@@ -1,0 +1,4 @@
+- add Dictionary supervisor - Done
+- add explanation for the restart schemes
+- add Dictionary supervisor to top-level supervisor
+- add stop functionality to both the GenServers

@@ -1,4 +1,4 @@
-defmodule Hangman.GameServer.Supervisor do
+defmodule Hangman.Dictionary.Supervisor do
   use Supervisor
 
   def start_link(opts \\ []) do
@@ -8,10 +8,10 @@ defmodule Hangman.GameServer.Supervisor do
 
   def init(:ok) do
     children = [
-      worker(Hangman.GameServer, [], restart: :transient)
+      worker(Hangman.Dictionary, [], restart: :transient)
     ]
 
-    supervise(children, strategy: :one_for_one)
+    supervise(children, strategy: :rest_for_one)
     # opts = [strategy: :one_for_one, name: Hangman.Supervisor]
     # {:ok, _pid} = Supervisor.start_link(children, opts)
   end
