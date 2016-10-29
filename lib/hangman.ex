@@ -3,8 +3,16 @@ defmodule Hangman do
 
   @moduledoc """
 
-  Write your description of your supervision scheme here...
+  Supervision Strategy - rest_for_one
+    Choosing this strategy because if the Dictionary crashes, we want
+    everything after that to be restarted.
+    Currently Dictionary starts first, followed by GameServer.
+    This way if Dictionary crashes, GameServer restarts and if GameServer
+    crashes, only that restarts.
 
+  Restart Value - transient
+    Chosen because we want to re-run the modules only if they are
+    terminated abnormally.
   """
 
   def start(_type, _args) do
@@ -14,11 +22,11 @@ defmodule Hangman do
      import Supervisor.Spec, warn: false
 
      children = [
-       worker(Hangman.GameServer.Supervisor, []),
-       worker(Hangman.Dictionary.Supervisor, [])
+       worker(Hangman.Dictionary, [], restart: :transient),
+       worker(Hangman.GameServer.Supervisor, [])
      ]
 
-     opts = [strategy: :one_for_one, name: Hangman.Supervisor]
+     opts = [strategy: :rest_for_one, name: Hangman.Supervisor]
      {:ok, _pid} = Supervisor.start_link(children, opts)
   end
 end

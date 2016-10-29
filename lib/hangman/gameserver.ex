@@ -1,11 +1,10 @@
 defmodule Hangman.GameServer do
   use GenServer
   alias Hangman.Game, as: Game
-  #alias Hangman.Crasher, as: Crasher
 
 
   @me __MODULE__
-  #import Hangman.Crasher
+  import Hangman.Crasher
 
   #############
   ##   API   ##
@@ -33,7 +32,7 @@ defmodule Hangman.GameServer do
     GenServer.call(@me, {:turns_left})
   end
 
-
+  #misc. func.s
   def stop do
     GenServer.stop(@me)
   end
