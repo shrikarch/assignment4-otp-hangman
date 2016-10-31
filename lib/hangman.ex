@@ -16,8 +16,7 @@ defmodule Hangman do
   """
 
   def start(_type, _args) do
-    # Uncomment and complete this:
-     import Supervisor.Spec, warn: false
+    import Supervisor.Spec, warn: false
 
      children = [
        worker(Hangman.Dictionary, [], restart: :transient),

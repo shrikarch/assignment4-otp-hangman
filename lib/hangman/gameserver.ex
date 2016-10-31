@@ -3,8 +3,8 @@ defmodule Hangman.GameServer do
   alias Hangman.Game, as: Game
 
 
-  @me __MODULE__
-  import Hangman.Crasher
+  #@me __MODULE__
+  #import Hangman.Crasher
 
   #############
   ##   API   ##
@@ -12,34 +12,31 @@ defmodule Hangman.GameServer do
    def start_link(word \\ Hangman.Dictionary.random_word) do
      GenServer.start_link(__MODULE__, word)
    end
-  def new_game do
-    GenServer.call(@me, {:new_game})
-  end
-  def word_as_string(pid \\ @me, reveal \\ false) do
+  def word_as_string(pid, reveal \\ false) do
     GenServer.call(pid, {:word_as_string, reveal})
   end
-  def make_move(pid \\ @me, guess) do
+  def make_move(pid, guess) do
     GenServer.call(pid, {:make_move, guess})
   end
 
-  def word_length(pid \\ @me) do
+  def word_length(pid) do
     GenServer.call(pid, {:word_length})
   end
-  def letters_used_so_far(pid \\ @me) do
+  def letters_used_so_far(pid) do
     GenServer.call(pid, {:letters_used_so_far})
   end
-  def turns_left(pid \\ @me) do
+  def turns_left(pid) do
     GenServer.call(pid, {:turns_left})
   end
 
   #misc. func.s
-  def stop(pid \\ @me) do
+  def stop(pid) do
     GenServer.stop(pid)
   end
-  def show_state(pid \\ @me) do
+  def show_state(pid) do
     GenServer.call(pid, {:show_state})
   end
-  def crash(pid \\ @me, reason) do
+  def crash(pid, reason) do
     GenServer.cast(pid, {:crash, reason})
   end
 
@@ -53,9 +50,6 @@ defmodule Hangman.GameServer do
   #calls
   def handle_call({:show_state}, _from, state) do
     { :reply, state, state}
-  end
-  def handle_call({:new_game}, _from, state) do
-    { :reply, Game.new_game, state}
   end
   def handle_call({:word_as_string, reveal}, _from, state) do
     { :reply, Game.word_as_string(state, reveal), state}

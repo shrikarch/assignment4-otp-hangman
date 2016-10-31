@@ -7,7 +7,7 @@ use GenServer
   """
 
   @word_list_file_name "assets/words.8800"
-  @me __MODULE__
+  @dict __MODULE__
   @doc """
   Return a random word from our word list. Whitespace and newlines
   will have been removed.
@@ -48,13 +48,13 @@ use GenServer
 
   #API#
   def start_link(default \\ []) do
-    GenServer.start_link(__MODULE__, default, name: @me)
+    GenServer.start_link(__MODULE__, default, name: @dict)
   end
   def random_word do
-    GenServer.call(@me, {:random})
+    GenServer.call(@dict, {:random})
   end
   def words_of_length(len) do
-    GenServer.call(@me, {:word_length, len})
+    GenServer.call(@dict, {:word_length, len})
   end
 
   #implementation#
