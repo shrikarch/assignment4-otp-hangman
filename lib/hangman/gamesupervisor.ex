@@ -1,13 +1,13 @@
 defmodule Hangman.GameSupervisor do
   use Supervisor
-  @name Hangman.GameSupervisor
+  #@name Hangman.GameSupervisor
 
   def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
   def new_game do
-    Supervisor.start_child(@name, [])
+    Supervisor.start_child(Hangman.GameSupervisor, [])
   end
 
   def init(:ok) do

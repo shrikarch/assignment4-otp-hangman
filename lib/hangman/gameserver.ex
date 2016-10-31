@@ -10,7 +10,7 @@ defmodule Hangman.GameServer do
   ##   API   ##
   #############
    def start_link(word \\ Hangman.Dictionary.random_word) do
-     GenServer.start_link(__MODULE__, word, name: @me)
+     GenServer.start_link(__MODULE__, word)
    end
   def new_game do
     GenServer.call(@me, {:new_game})
