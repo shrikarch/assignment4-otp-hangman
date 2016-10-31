@@ -16,17 +16,15 @@ defmodule Hangman do
   """
 
   def start(_type, _args) do
-
     # Uncomment and complete this:
-
      import Supervisor.Spec, warn: false
 
      children = [
        worker(Hangman.Dictionary, [], restart: :transient),
-       worker(Hangman.GameServer.Supervisor, [])
+       supervisor(Hangman.GameSupervisor, [])
      ]
 
      opts = [strategy: :rest_for_one, name: Hangman.Supervisor]
-     {:ok, _pid} = Supervisor.start_link(children, opts)
+     Supervisor.start_link(children, opts)
   end
 end

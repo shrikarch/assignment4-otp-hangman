@@ -9,38 +9,38 @@ defmodule Hangman.GameServer do
   #############
   ##   API   ##
   #############
-  def start_link(word \\ Hangman.Dictionary.random_word) do
-    GenServer.start_link(__MODULE__, word, name: @me)
-  end
+   def start_link(word \\ Hangman.Dictionary.random_word) do
+     GenServer.start_link(__MODULE__, word, name: @me)
+   end
   def new_game do
-    GenServer.cast(@me, {:new_game})
+    GenServer.call(@me, {:new_game})
   end
-  def word_as_string(reveal \\ false) do
-    GenServer.call(@me, {:word_as_string, reveal})
+  def word_as_string(pid \\ @me, reveal \\ false) do
+    GenServer.call(pid, {:word_as_string, reveal})
   end
-  def make_move(guess) do
-    GenServer.call(@me, {:make_move, guess})
+  def make_move(pid \\ @me, guess) do
+    GenServer.call(pid, {:make_move, guess})
   end
 
-  def word_length do
-    GenServer.call(@me, {:word_length})
+  def word_length(pid \\ @me) do
+    GenServer.call(pid, {:word_length})
   end
-  def letters_used_so_far do
-    GenServer.call(@me, {:letters_used_so_far})
+  def letters_used_so_far(pid \\ @me) do
+    GenServer.call(pid, {:letters_used_so_far})
   end
-  def turns_left do
-    GenServer.call(@me, {:turns_left})
+  def turns_left(pid \\ @me) do
+    GenServer.call(pid, {:turns_left})
   end
 
   #misc. func.s
-  def stop do
-    GenServer.stop(@me)
+  def stop(pid \\ @me) do
+    GenServer.stop(pid)
   end
-  def show_state do
-    GenServer.call(@me, {:show_state})
+  def show_state(pid \\ @me) do
+    GenServer.call(pid, {:show_state})
   end
-  def crash(reason) do
-    GenServer.cast(@me, {:crash, reason})
+  def crash(pid \\ @me, reason) do
+    GenServer.cast(pid, {:crash, reason})
   end
 
   ########################
@@ -53,6 +53,9 @@ defmodule Hangman.GameServer do
   #calls
   def handle_call({:show_state}, _from, state) do
     { :reply, state, state}
+  end
+  def handle_call({:new_game}, _from, state) do
+    { :reply, Game.new_game, state}
   end
   def handle_call({:word_as_string, reveal}, _from, state) do
     { :reply, Game.word_as_string(state, reveal), state}
@@ -73,9 +76,9 @@ defmodule Hangman.GameServer do
 
 
   #casts
-  def handle_cast({:new_game}, state) do
-    { :noreply, Game.new_game}
-  end
+  # def handle_cast({:new_game}, state) do
+  #   { :noreply, Game.new_game}
+  # end
   def handle_cast({:crash, reason}, state) do
     {:stop, reason, state}
   end
